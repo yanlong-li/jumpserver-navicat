@@ -148,7 +148,7 @@ fn main() {
             }
         }
         _ => {
-            Command::new("JumpServerClient2.exe").arg(arg).output().expect("启动失败");
+            Command::new(format!("{}\\JumpServerClient2.exe",root_path)).arg(arg).output().expect("启动失败");
         }
     }
 }
