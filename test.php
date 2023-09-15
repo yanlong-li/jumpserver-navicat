@@ -1,5 +1,5 @@
 <?php
-
+// source  https://github.com/tianhe1986/FatSmallTools
 namespace FatSmallTools;
 
 class NavicatPassword
