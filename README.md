@@ -14,7 +14,7 @@
 2. 编译本项目，并将生成的 exe 文件放置到 `%AppData%\JumpServer\Client\bin\JumpServerClient.exe`
 3. 在 `%AppData%\JumpServer\Client\bin\` 创建 php.path 和 navicat.path 文件，分别写两个程序的路径，到exe的，比如 `D:\sdk\php-7.1.29-nts-Win32-VC14-x64\php.exe`、`C:\Program Files\PremiumSoft\Navicat Premium 16\navicat.exe`
 
-用到 PHP 是因为我目前不会 rust 的加密解密，只有在 GitHub 上找到了其他大佬的 PHP 源码实现，需要用来加密 navicat 的密码。也希望有其他大佬能实现。
+用到 PHP 是因为我目前不会 rust 的加密解密，只有在 GitHub 上找到了其他 [大佬的 PHP 源码实现](https://github.com/tianhe1986/FatSmallTools)，需要用来加密 navicat 的密码。也希望有其他大佬能实现。
 
 PHP 仅支持 7.1 和 7.2 版本，其他版本可能会出现问题。
 
