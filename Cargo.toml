@@ -11,3 +11,4 @@ hex = "0.4.3"
 serde = { version = "1.0.188" ,features = ["derive"] }
 serde_json = { version = "1.0.107",features = ["default"] }
 rust-crypto = { version = "0.2.36" }
+byteorder = "1.4.3"

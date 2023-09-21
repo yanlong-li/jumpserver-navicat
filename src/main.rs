@@ -1,9 +1,10 @@
 use std::env;
 use std::env::args;
-use std::fs::{read_to_string, remove_file, write};
+use std::fs::{File, read_to_string, remove_file};
 use std::process::Command;
 
 use base64::{Engine, engine::general_purpose};
+use byteorder::{LittleEndian, WriteBytesExt};
 use hex::ToHex;
 use serde::Deserialize;
 
@@ -69,7 +70,7 @@ fn main() {
 
     let config = serde_json::from_slice::<Config>(&json_str).unwrap();
 
-    // println!("{:#?}", config);
+    println!("{:#?}", config);
 
     match config.protocol.as_str() {
         "mysql" => {
@@ -103,7 +104,18 @@ fn main() {
                 .replace("{{username}}", &config.token.id)
                 .replace("{{password}}", &ass.as_str());
 
-            write(format!("{}\\tmp.reg", root_path), reg_str).expect("写入临时注册表文件失败");
+
+            let v: Vec<u16> = reg_str.encode_utf16().collect();
+
+            let mut file = File::create(format!("{}\\tmp.reg", root_path)).unwrap();
+
+            file.write_u16::<LittleEndian>(0xFEFF).unwrap();
+
+            for i in 0..v.len() {
+                file.write_u16::<LittleEndian>(v[i]).unwrap();
+            }
+            file.sync_all().expect("保存失败");
+            // write(format!("{}\\tmp.reg", root_path), "").expect("写入临时注册表文件失败");
 
             println!("{}", "导入注册表数据");
             // sleep(std::time::Duration::from_secs(5));
@@ -125,7 +137,7 @@ fn main() {
                 Err(_) => {
                     let program_file_dir = env::var("ProgramFiles").expect("获取ProgramFiles失败");
                     format!("{}\\PremiumSoft\\Navicat Premium 16\\navicat.exe", program_file_dir)
-                },
+                }
             };
 
             Command::new(navicat_path).output().expect("启动失败");
@@ -140,7 +152,7 @@ fn main() {
             println!("{}", format!("HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}", config.asset.name));
         }
         _ => {
-            Command::new(format!("{}\\JumpServerClient2.exe",root_path)).arg(arg).output().expect("启动失败");
+            Command::new(format!("{}\\JumpServerClient2.exe", root_path)).arg(arg).output().expect("启动失败");
         }
     }
 }
