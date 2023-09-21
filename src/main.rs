@@ -2,7 +2,6 @@ use std::env;
 use std::env::args;
 use std::fs::{read_to_string, remove_file, write};
 use std::process::Command;
-use std::thread::sleep;
 
 use base64::{Engine, engine::general_purpose};
 use hex::ToHex;
@@ -12,7 +11,6 @@ use crate::encrypt::encrypt;
 use crate::reg::get_reg_str;
 
 mod reg;
-mod php;
 
 mod encrypt;
 
@@ -54,7 +52,7 @@ struct Endpoint {
 fn main() {
     let root_path = env::current_exe().expect("获取当前路径失败").parent().expect("获取父级目录").to_str().expect("转换为字符串失败").to_string();
 
-    println!("exe 目录: {}", root_path);
+    // println!("exe 目录: {}", root_path);
 
     // 从 args 中取第二个参数
     let arg = args().nth(1).unwrap_or_else(|| "0".to_string());
@@ -62,33 +60,32 @@ fn main() {
     // 去除 args 的 前 6个字符
     let arg_str = arg.replace("jms://", "").replace("/", "");
 
-    println!("{}", arg_str);
+    // println!("{}", arg_str);
 
     // sleep(std::time::Duration::from_secs(5));
-
+    println!("{}", "解析数据");
     // base64解码
     let json_str = general_purpose::STANDARD.decode(arg_str.to_string()).unwrap();
 
     let config = serde_json::from_slice::<Config>(&json_str).unwrap();
 
-    println!("{:#?}", config);
+    // println!("{:#?}", config);
 
     match config.protocol.as_str() {
         "mysql" => {
-            println!("{}", "准备读取注册表");
+            println!("{}", "准备注册表数据");
             // sleep(std::time::Duration::from_secs(5));
             let reg_str = get_reg_str();
 
-            println!("{}", "准备加密");
+            println!("{}", "加密密码");
             // sleep(std::time::Duration::from_secs(5));
-
 
             let ass = encrypt(&config.token.value);
 
-            println!("{}", ass);
+            // println!("{}", ass);
             // 6F1B1B08C335D4A54F464A5C673EC931
 
-            println!("{}", "写文件");
+            println!("{}", "写注册表数据临时文件");
             // sleep(std::time::Duration::from_secs(5));
 
             let port = config.endpoint.port.to_be_bytes();
@@ -97,7 +94,7 @@ fn main() {
 
             let user_profile = env::var("UserProfile").expect("获取用户环境变量失败");
 
-            println!("{}", user_profile);
+            // println!("{}", user_profile);
 
             let reg_str = reg_str.replace("{{name}}", &config.asset.name)
                 .replace("{{user_profile}}", &user_profile.replace("\\", "\\\\"))
@@ -108,7 +105,7 @@ fn main() {
 
             write(format!("{}\\tmp.reg", root_path), reg_str).expect("写入临时注册表文件失败");
 
-            println!("{}", "导入注册表");
+            println!("{}", "导入注册表数据");
             // sleep(std::time::Duration::from_secs(5));
 
             Command::new("reg").arg("import").arg(format!("{}\\tmp.reg", root_path)).output().expect("导入注册表失败");
@@ -116,7 +113,7 @@ fn main() {
             // 删除文件
             let _ = remove_file(format!("{}\\tmp.reg", root_path));
 
-            println!("{}", "启动");
+            println!("{}", "启动 NativeClient");
             // sleep(std::time::Duration::from_secs(5));
 
 
@@ -141,11 +138,6 @@ fn main() {
                 .expect("删除注册表失败");
 
             println!("{}", format!("HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}", config.asset.name));
-
-            for i in vec![5, 4, 3, 2, 1] {
-                println!("即将退出 {}s", i);
-                sleep(std::time::Duration::from_secs(1));
-            }
         }
         _ => {
             Command::new(format!("{}\\JumpServerClient2.exe",root_path)).arg(arg).output().expect("启动失败");
