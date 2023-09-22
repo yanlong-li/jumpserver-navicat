@@ -70,32 +70,23 @@ fn main() {
 
     let config = serde_json::from_slice::<Config>(&json_str).unwrap();
 
-    println!("{:#?}", config);
+    // println!("{:#?}", config);
 
     match config.protocol.as_str() {
         "mysql" => {
-            println!("{}", "准备注册表数据");
-            // sleep(std::time::Duration::from_secs(5));
+            println!("{}", "准备注册表");
             let reg_str = get_reg_str();
 
             println!("{}", "加密密码");
-            // sleep(std::time::Duration::from_secs(5));
-
             let ass = encrypt(&config.token.value);
 
-            // println!("{}", ass);
-            // 6F1B1B08C335D4A54F464A5C673EC931
-
             println!("{}", "写注册表数据临时文件");
-            // sleep(std::time::Duration::from_secs(5));
 
             let port = config.endpoint.port.to_be_bytes();
 
             let port_str: String = port.encode_hex();
 
             let user_profile = env::var("UserProfile").expect("获取用户环境变量失败");
-
-            // println!("{}", user_profile);
 
             let reg_str = reg_str.replace("{{name}}", &config.asset.name)
                 .replace("{{user_profile}}", &user_profile.replace("\\", "\\\\"))
@@ -104,30 +95,28 @@ fn main() {
                 .replace("{{username}}", &config.token.id)
                 .replace("{{password}}", &ass.as_str());
 
+            let reg_path = format!("{}\\tmp.reg", root_path);
 
-            let v: Vec<u16> = reg_str.encode_utf16().collect();
-
-            let mut file = File::create(format!("{}\\tmp.reg", root_path)).unwrap();
-
-            file.write_u16::<LittleEndian>(0xFEFF).unwrap();
-
-            for i in 0..v.len() {
-                file.write_u16::<LittleEndian>(v[i]).unwrap();
+            {
+                let v: Vec<u16> = reg_str.encode_utf16().collect();
+                let mut file = File::create(&reg_path).unwrap();
+                file.write_u16::<LittleEndian>(0xFEFF).unwrap();
+                for i in 0..v.len() {
+                    file.write_u16::<LittleEndian>(v[i]).unwrap();
+                }
             }
-            file.sync_all().expect("保存失败");
-            // write(format!("{}\\tmp.reg", root_path), "").expect("写入临时注册表文件失败");
 
             println!("{}", "导入注册表数据");
-            // sleep(std::time::Duration::from_secs(5));
-
-            Command::new("reg").arg("import").arg(format!("{}\\tmp.reg", root_path)).output().expect("导入注册表失败");
+            Command::new("reg")
+                .arg("import")
+                .arg(&reg_path)
+                .output()
+                .expect("导入注册表失败");
 
             // 删除文件
             let _ = remove_file(format!("{}\\tmp.reg", root_path));
 
             println!("{}", "启动 NativeClient");
-            // sleep(std::time::Duration::from_secs(5));
-
 
             // 检查文件 phppath.txt 是否存在
             let navicat_path = read_to_string(format!("{}\\navicat.path", root_path));
