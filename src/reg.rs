@@ -21,7 +21,7 @@ pub fn get_reg_str() -> String {
 "UserName"="{{username}}"
 "AskPassword"="false"
 "Pwd"="{{password}}"
-"AutoConnect"=dword:00000000
+"AutoConnect"=dword:00000001
 "Codepage"=dword:0000fde9
 "UseCharacterSet"=dword:00000001
 "ClientCharacterSet"=""

@@ -1,7 +1,8 @@
-use std::env;
+use std::{env};
 use std::env::args;
 use std::fs::{File, read_to_string, remove_file};
 use std::process::Command;
+use std::thread::sleep;
 
 use base64::{Engine, engine::general_purpose};
 use byteorder::{LittleEndian, WriteBytesExt};
@@ -129,7 +130,9 @@ fn main() {
                 }
             };
 
-            Command::new(navicat_path).output().expect("启动失败");
+            Command::new(navicat_path).spawn().expect("启动失败");
+
+            sleep(std::time::Duration::from_secs(5));
             println!("{}", "清理注册表");
             Command::new("reg")
                 .arg("delete")
@@ -141,7 +144,7 @@ fn main() {
             println!("{}", format!("HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}", config.asset.name));
         }
         _ => {
-            Command::new(format!("{}\\JumpServerClient2.exe", root_path)).arg(arg).output().expect("启动失败");
+            Command::new(format!("{}\\JumpServerClient2.exe", root_path)).arg(arg).spawn().expect("启动失败");
         }
     }
 }
