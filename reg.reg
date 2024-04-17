@@ -93,6 +93,7 @@ Windows Registry Editor Version 5.00
 "ConnectionUUID"=""
 "UnknownJsonPropertiesString"=""
 "CloudSyncStatus"="Ready"
+"LabelColor"="$009D9DFF"
 
 [HKEY_CURRENT_USER\Software\PremiumSoft\Navicat\Servers\{{name}}\Profiles]
 

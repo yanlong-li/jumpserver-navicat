@@ -107,6 +107,7 @@ pub fn get_reg_str() -> String {
 "ConnectionUUID"=""
 "UnknownJsonPropertiesString"=""
 "CloudSyncStatus"="Ready"
+"LabelColor"="$009D9DFF"
 
 [HKEY_CURRENT_USER\Software\PremiumSoft\Navicat\Servers\{{name}}\Profiles]
 
