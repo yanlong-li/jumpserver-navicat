@@ -1,49 +1,45 @@
 # JumpServer 客户端拉起 Navicat
+>当前仅支持 MySQL 数据库，如需要其它数据库可提交 issue 交流。
+
+## 注意，注意，注意，请避免使用第三方编译后的二进制文件，最好自己编译一份，防止可能存在的数据窃取。
 
 
-# 注意，注意，注意，请避免使用第三方编译后的二进制文件，最好自己编译一份，防止可能存在的数据窃取。
+因 `Navicat` 本身机制，程序会将数据库连接信息写入注册表，为保护敏感信息，程序将在结束前删除写入的数据。
 
-## 2025年5月8日 此程序仅针对客户端 v2.0.0 进行测试，其它版本可能存在不兼容。
-
-
-程序会导入注册表数据，并在程序结束前删除。
-
-请注意，如果你本地已存在的连接和 jumpserver 中的连接同名，则会覆盖并清理，请注意不要同名。
+请注意，如果你本地已存在的连接和 `jumpserver` 中的连接同名，则会覆盖并清理，请注意不要同名。
 
 请先备份好本地数据，最好先测试再使用。
 
 
-## 使用步骤 客户端 v2.0.0
+## 使用步骤
 
-1. 进入 `%AppData%\JumpServer\Client\bin\` 目录， 原有的 JumpServerClient.exe 重命名为 JumpServerClient2.exe
-2. 编译本项目，并将生成的 exe 文件放置到 `%AppData%\JumpServer\Client\bin\JumpServerClient.exe`
-3. 在 `%AppData%\JumpServer\Client\bin\` 创建navicat.path 文件，写 navicat 程序的路径，到 exe 的，比如 `C:\Program Files\PremiumSoft\Navicat Premium 16\navicat.exe`
-4. 在 服务端 点击连接，选择 “客户端” > “数据库客户端” > “连接”
+本程序当前已升级到 v0.3.0，可将本程序放置于任意目录（避免中文和特殊符号等），然后双击运行一次。
 
-由于 Navicat 本身机制，只在启动时读取注册表中的连接配置信息，故而如果 Navicat 已在运行则新连接不会显示，可以在 工具>选项>高级>允许重复运行 navicat，这样每次启动的 Navicat 客户端都会独立运行且读取新的连接配置。
+* 首次运行本程序会覆盖堡垒机 jms:// 协议的执行程序路径，一旦您打开堡垒机原始程序的GUI程序则可能会失效，需要重新再双击运行一次本程序。
 
-### 使用步骤 客户端 v2.1.0+
+程序将自动检测 `Navicat` 的安装目录,如您安装目录非默认目录，请在本程序同目录下创建 `navicat.path` 文件，并将Navicat实际目录写入文件。
+> 比如 `C:\Program Files\PremiumSoft\Navicat Premium 16\navicat.exe`
 
-大致一样，只是目录换了
+当前检测列表为：
 
-1. 进入 `%USERPROFILE%\appdata\local\Programs\JumpServerClient\resources\bin\windows\` 目录， 原有的 JumpServerClient.exe 重命名为 JumpServerClient2.exe
-2. 编译本项目，并将生成的 exe 文件放置到 `%USERPROFILE%\appdata\local\Programs\JumpServerClient\resources\bin\windows\JumpServerClient.exe`
-3. 在 `%USERPROFILE%\appdata\local\Programs\JumpServerClient\resources\bin\windows\` 创建 navicat.path 文件，写 navicat 程序的路径，到 exe 的，比如 `C:\Program Files\PremiumSoft\Navicat Premium 16\navicat.exe`
-4. 在 服务端 点击连接，选择 “客户端” > “数据库客户端” > “连接”
+    C:\Program Files\PremiumSoft\Navicat Premium 17
+    C:\Program Files\PremiumSoft\Navicat Premium Lite 17
+    C:\Program Files\PremiumSoft\Navicat 17 for MySQL
+    C:\Program Files\PremiumSoft\Navicat Premium 16
+    C:\Program Files\PremiumSoft\Navicat 16 for MySQL
 
-由于 Navicat 本身机制，只在启动时读取注册表中的连接配置信息，故而如果 Navicat 已在运行则新连接不会显示，可以在 工具>选项>高级>允许重复运行 navicat，这样每次启动的 Navicat 客户端都会独立运行且读取新的连接配置。
+当前程序仅支持 `MySQL` 协议，如遇到其他协议如 `SSH`、`Redis` 等会调用 `jms` 原始客户端。将在以下目录检测 `jms` 原始客户端。
 
-## 使用步骤 客户端 v3.0.0+
+    %UserProfile%\AppData\Roaming\JumpServer\client\bin\JumpServerClient.exe
+    %UserProfile%\AppData\Local\Programs\JumpServerClient\resources\bin\windows\JumpServerClient.exe
+    %UserProfile%\AppData\Local\Programs\JumpServerClient\resources\windows\JumpServerClient.exe
+    %ProgramFiles%\JumpServerClient\resources\bin\windows\JumpServerClient.exe
+    %ProgramFiles%\JumpServerClient\resources\windows\JumpServerClient.exe
 
-我安装了服务端 v4.9.0 对应客户端 v3.0.3，看客户端界面支持 Navicat Premium 17 Lite,但是我点击 只提示 “连接成功”  就没反应了，配置 DBeaver 也是，不知道是不是我电脑问题。
-服务端的连接数据库仅显示支持 web cli 、web gui，没显示唤醒客户端按钮。
-客户端和服务端连接 xshell 等倒是正常，不知道哪里有问题。
-
-没法继续测试下去了
 
 ## 关于Navicat的连接配置，可以修改注册表进行自定义
 
-复制源码中的 `reg.reg` 到 `%AppData%\JumpServer\Client\bin\` 目录下，进行自定义的一些编辑。程序将以此文件作为模板替换一些关键词。
+复制源码中的 `mysql.reg` 到 本程序目录下，进行自定义的一些编辑。程序将以此文件作为模板替换一些关键词。
 
 例如：
 ```text

@@ -1,18 +1,14 @@
 use std::env;
 use std::fs::read_to_string;
 
-pub fn get_reg_str() -> String {
+pub fn get_mysql_reg_str() -> String {
     let root_path = env::current_exe().expect("获取当前路径失败").parent().expect("获取父级目录").to_str().expect("转换为字符串失败").to_string();
 
 
-    let reg_result = read_to_string(format!("{}\\reg.reg", root_path));
+    let reg_result = read_to_string(format!("{}\\mysql.reg", root_path));
 
-    match reg_result {
-        Ok(val) => {
-            val
-        }
-        Err(_) => {
-            String::from(r#"Windows Registry Editor Version 5.00
+    reg_result.unwrap_or_else(|_| {
+        String::from(r#"Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\PremiumSoft\Navicat\Servers\{{name}}]
 "ServiceProvider"="spDefault"
@@ -112,6 +108,5 @@ pub fn get_reg_str() -> String {
 [HKEY_CURRENT_USER\Software\PremiumSoft\Navicat\Servers\{{name}}\Profiles]
 
 "#)
-        }
-    }
+    })
 }

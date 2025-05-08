@@ -23,7 +23,7 @@ pub fn encrypt(str: &str) -> String {
     }
 
 
-    return result.encode_hex_upper();
+    result.encode_hex_upper()
 }
 
 fn xor_bytes(str1: &Vec<u8>, str2: &Vec<u8>) -> Vec<u8> {
@@ -32,7 +32,7 @@ fn xor_bytes(str1: &Vec<u8>, str2: &Vec<u8>) -> Vec<u8> {
         str[i] = str1[i] ^ str2[i];
     }
 
-    return str;
+    str
 }
 
 fn encrypt_block(block: &Vec<u8>) -> Vec<u8> {
@@ -44,7 +44,7 @@ fn encrypt_block(block: &Vec<u8>) -> Vec<u8> {
 
     bf.encrypt_block(block, &mut output);
 
-    return output.to_vec();
+    output.to_vec()
 }
 
 #[cfg(test)]

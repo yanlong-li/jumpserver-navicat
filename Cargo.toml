@@ -1,14 +1,27 @@
 [package]
-name = "jump_server_client_navicat"
-version = "0.1.0"
+name = "JumpServerClientNavicat"
+version = "0.3.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-base64 = "0.21.4"
+base64 = "0.22.1"
 hex = "0.4.3"
-serde = { version = "1.0.188" ,features = ["derive"] }
-serde_json = { version = "1.0.107",features = ["default"] }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = { version = "1.0.107", features = ["default"] }
 rust-crypto = { version = "0.2.36" }
 byteorder = "1.4.3"
+encoding_rs = "0.8.35"
+windows = { version = "0.61.1", features = ["Win32_Security", "Win32_System_Memory", "Win32_System_Threading", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging"] }
+
+
+[build-dependencies]
+winres = "*"
+
+[profile.release]
+panic = "abort"
+lto = true
+codegen-units = 1
+strip = true
+opt-level = "z"
