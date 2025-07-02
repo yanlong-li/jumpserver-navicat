@@ -64,27 +64,32 @@ pub fn launcher(config: &Config) {
     println!("{}", "启动 NativeClient");
 
     // 检查文件 phppath.txt 是否存在
-    let navicat_path = get_navicat_path().expect("查找 Navicat 目录失败");
+    let navicat_path = get_navicat_path();
 
-    Command::new(navicat_path).spawn().expect("启动失败");
+    if let Some(navicat_path) = navicat_path {
+        Command::new(navicat_path).spawn().expect("启动失败");
 
-    sleep(std::time::Duration::from_secs(5));
-    println!("{}", "清理注册表");
-    Command::new("reg")
-        .arg("delete")
-        .arg(format!(
-            "HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}",
-            config.asset.name
-        ))
-        .arg("/f")
-        .output()
-        .expect("删除注册表失败");
+        sleep(std::time::Duration::from_secs(5));
+        println!("{}", "清理注册表");
+        Command::new("reg")
+            .arg("delete")
+            .arg(format!(
+                "HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}",
+                config.asset.name
+            ))
+            .arg("/f")
+            .output()
+            .expect("删除注册表失败");
 
-    println!(
-        "{}",
-        format!(
-            "HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}",
-            config.asset.name
-        )
-    );
+        println!(
+            "{}",
+            format!(
+                "HKEY_CURRENT_USER\\Software\\PremiumSoft\\Navicat\\Servers\\{}",
+                config.asset.name
+            )
+        );
+    } else {
+        println!("查找 Navicat 安装位置失败");
+        sleep(std::time::Duration::from_secs(5));
+    }
 }
